@@ -67,15 +67,13 @@ if(USE_CUDA AND USE_ROCM)
   message(FATAL "CUDA and ROCm are mutually exclusive")
 endif()
 
-if(USE_ROCM)
+if(USE_ROCM) 
   # Find the HIP package, set the HIP paths, load the HIP CMake.
   include(cmake/LoadHIP.cmake)
   if(NOT PYTORCH_FOUND_HIP)
     set(USE_ROCM OFF)
   endif()
-endif()
-
-if(USE_CUDA)
+elseif(USE_CUDA)
   enable_language(CUDA)
   set(
     CMAKE_CUDA_FLAGS
