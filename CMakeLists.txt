@@ -55,7 +55,6 @@ option(BUILD_TORCHAUDIO_PYTHON_EXTENSION "Build Python extension" OFF)
 option(USE_CUDA "Enable CUDA support" OFF)
 option(USE_ROCM "Enable ROCM support" OFF)
 
-
 # check that USE_CUDA and USE_ROCM are not set at the same time
 if(USE_CUDA AND USE_ROCM)
   message(FATAL "CUDA and ROCm are mutually exclusive")
