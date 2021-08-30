@@ -73,7 +73,9 @@ if(USE_ROCM)
   if(NOT PYTORCH_FOUND_HIP)
     set(USE_ROCM OFF)
   endif()
-elseif(USE_CUDA)
+endif()
+
+if(USE_CUDA)
   enable_language(CUDA)
   set(
     CMAKE_CUDA_FLAGS
