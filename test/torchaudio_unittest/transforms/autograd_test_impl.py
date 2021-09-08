@@ -11,6 +11,7 @@ from torchaudio_unittest.common_utils import (
     nested_params,
     rnnt_utils,
     TestBaseMixin,
+    skipIfRocm,
 )
 
 
@@ -77,6 +78,7 @@ class AutogradTestMixin(TestBaseMixin):
         waveform = get_whitenoise(sample_rate=8000, duration=0.05, n_channels=2)
         self.assert_grad(transform, [waveform], nondet_tol=1e-10)
 
+    @skipIfRocm
     def test_inverse_spectrogram(self):
         # create a realistic input:
         waveform = get_whitenoise(sample_rate=8000, duration=0.05, n_channels=2)
@@ -100,6 +102,7 @@ class AutogradTestMixin(TestBaseMixin):
         [0, 0.99],
         [False, True],
     )
+    @skipIfRocm
     def test_griffinlim(self, momentum, rand_init):
         n_fft = 80
         power = 1
@@ -119,6 +122,7 @@ class AutogradTestMixin(TestBaseMixin):
         self.assert_grad(transform, [waveform])
 
     @parameterized.expand([(False,), (True,)])
+    @skipIfRocm
     def test_lfcc(self, log_lf):
         sample_rate = 8000
         transform = T.LFCC(sample_rate=sample_rate, log_lf=log_lf)

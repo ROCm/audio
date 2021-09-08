@@ -191,6 +191,7 @@ class Transforms(TestBaseMixin):
 
 
 class TransformsFloat32Only(TestBaseMixin):
+    @skipIfRocm
     def test_rnnt_loss(self):
         logits = torch.tensor(
             [

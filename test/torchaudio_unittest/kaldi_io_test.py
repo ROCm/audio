@@ -1,6 +1,9 @@
 import torch
 import torchaudio.kaldi_io as kio
 from torchaudio_unittest import common_utils
+from torchaudio_unittest.common_utils import (
+    skipIfRocm
+)
 
 
 class Test_KaldiIO(common_utils.TorchaudioTestCase):
@@ -23,11 +26,14 @@ class Test_KaldiIO(common_utils.TorchaudioTestCase):
             self.assertEqual(vec.dtype, expected_dtype)
             self.assertTrue(torch.all(torch.eq(vec, expected_output[key])))
 
+    @skipIfRocm
     def test_read_vec_int_ark(self):
         self._test_helper("vec_int.ark", self.data1, kio.read_vec_int_ark, torch.int32)
-
+    
+    @skipIfRocm
     def test_read_vec_flt_ark(self):
         self._test_helper("vec_flt.ark", self.data1, kio.read_vec_flt_ark, torch.float32)
-
+    
+    @skipIfRocm
     def test_read_mat_ark(self):
         self._test_helper("mat.ark", [self.data1, self.data2], kio.read_mat_ark, torch.float32)
