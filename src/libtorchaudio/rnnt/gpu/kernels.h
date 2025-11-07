@@ -2,8 +2,13 @@
 
 #include <cassert>
 
+#ifdef __HIP_PLATFORM_AMD__
+#include <libtorchaudio/rnnt/gpu/kernel_utils.h>
+#include <libtorchaudio/rnnt/gpu/math_hip.cuh>
+#else
 #include <libtorchaudio/rnnt/gpu/kernel_utils.h>
 #include <libtorchaudio/rnnt/gpu/math.cuh>
+#endif
 
 namespace torchaudio {
 namespace rnnt {

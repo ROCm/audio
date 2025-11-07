@@ -68,10 +68,11 @@ if(USE_CUDA AND USE_ROCM)
 endif()
 
 if(USE_ROCM) 
+  enable_language(HIP)
   # Find the HIP package, set the HIP paths, load the HIP CMake.
   include(cmake/LoadHIP.cmake)
   if(NOT PYTORCH_FOUND_HIP)
-    set(USE_ROCM OFF)
+    #set(USE_ROCM OFF)
   endif()
 endif()
 
