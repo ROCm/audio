@@ -8,7 +8,6 @@ from typing import List, Optional, Tuple, Union
 import torch
 import torchaudio
 from torch import Tensor
-from torchaudio._internal.module_utils import dropping_support
 
 from .filtering import highpass_biquad, treble_biquad
 
@@ -848,7 +847,8 @@ def mask_along_axis_iid(
 
     if axis not in [dim - 2, dim - 1]:
         raise ValueError(
-            f"Only Frequency and Time masking are supported (axis {dim-2} and axis {dim-1} supported; {axis} given)."
+            "Only Frequency and Time masking are supported"
+            f" (axis {dim - 2} and axis {dim - 1} supported; {axis} given)."
         )
 
     if not 0.0 <= p <= 1.0:
@@ -920,7 +920,8 @@ def mask_along_axis(
 
     if axis not in [dim - 2, dim - 1]:
         raise ValueError(
-            f"Only Frequency and Time masking are supported (axis {dim-2} and axis {dim-1} supported; {axis} given)."
+            "Only Frequency and Time masking are supported"
+            f" (axis {dim - 2} and axis {dim - 1} supported; {axis} given)."
         )
 
     if not 0.0 <= p <= 1.0:
@@ -1732,8 +1733,18 @@ class RnntLoss(torch.autograd.Function):
         result = grad * grad_out
         return (result, None, None, None, None, None, None, None)
 
+    @staticmethod
+    def ts_apply(logits, targets, logit_lengths, target_lengths, blank: int, clamp: float, fused_log_softmax: bool):
+        if torch.jit.is_scripting():
+            output, saved = torch.ops.torchaudio.rnnt_loss_forward(
+                logits, targets, logit_lengths, target_lengths, blank, clamp, fused_log_softmax
+            )
+            return output
+        else:
+            return RnntLoss.apply(logits, targets, logit_lengths, target_lengths, blank, clamp, fused_log_softmax)
 
-def _rnnt_loss(
+
+def rnnt_loss(
     logits: Tensor,
     targets: Tensor,
     logit_lengths: Tensor,
@@ -1775,7 +1786,7 @@ def _rnnt_loss(
     if blank < 0:  # reinterpret blank index if blank < 0.
         blank = logits.shape[-1] + blank
 
-    costs = RnntLoss.apply(logits, targets, logit_lengths, target_lengths, blank, clamp, fused_log_softmax)
+    costs = RnntLoss.ts_apply(logits, targets, logit_lengths, target_lengths, blank, clamp, fused_log_softmax)
 
     if reduction == "mean":
         return costs.mean()
@@ -1828,11 +1839,6 @@ def psd(
 
     psd = psd.sum(dim=-3)
     return psd
-
-
-# Expose both deprecated wrapper as well as original because torchscript breaks on
-# wrapped functions.
-rnnt_loss = dropping_support(_rnnt_loss)
 
 
 def _compute_mat_trace(input: torch.Tensor, dim1: int = -1, dim2: int = -2) -> torch.Tensor:

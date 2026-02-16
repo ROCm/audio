@@ -15,8 +15,8 @@ from torchaudio.functional.functional import (
     _check_convolve_mode,
     _fix_waveform_shape,
     _get_sinc_resample_kernel,
-    _rnnt_loss,
     _stretch_waveform,
+    rnnt_loss,
 )
 
 __all__ = []
@@ -374,7 +374,8 @@ class MelScale(torch.nn.Module):
         :py:func:`torchaudio.functional.melscale_fbanks` - The function used to
         generate the filter banks.
     """
-    __constants__ = ["n_mels", "sample_rate", "f_min", "f_max"]
+
+    __constants__ = ["n_mels", "sample_rate", "f_min", "f_max", "n_stft"]
 
     def __init__(
         self,
@@ -391,13 +392,16 @@ class MelScale(torch.nn.Module):
         self.sample_rate = sample_rate
         self.f_max = f_max if f_max is not None else float(sample_rate // 2)
         self.f_min = f_min
+        self.n_stft = n_stft
         self.norm = norm
         self.mel_scale = mel_scale
 
         if f_min > self.f_max:
             raise ValueError("Require f_min: {} <= f_max: {}".format(f_min, self.f_max))
 
-        fb = F.melscale_fbanks(n_stft, self.f_min, self.f_max, self.n_mels, self.sample_rate, self.norm, self.mel_scale)
+        fb = F.melscale_fbanks(
+            self.n_stft, self.f_min, self.f_max, self.n_mels, self.sample_rate, self.norm, self.mel_scale
+        )
         self.register_buffer("fb", fb)
 
     def forward(self, specgram: Tensor) -> Tensor:
@@ -464,10 +468,13 @@ class InverseMelScale(torch.nn.Module):
         driver: str = "gels",
     ) -> None:
         super(InverseMelScale, self).__init__()
+        self.n_stft = n_stft
         self.n_mels = n_mels
         self.sample_rate = sample_rate
         self.f_max = f_max or float(sample_rate // 2)
         self.f_min = f_min
+        self.norm = norm
+        self.mel_scale = mel_scale
         self.driver = driver
 
         if f_min > self.f_max:
@@ -476,7 +483,9 @@ class InverseMelScale(torch.nn.Module):
         if driver not in ["gels", "gelsy", "gelsd", "gelss"]:
             raise ValueError(f'driver must be one of ["gels", "gelsy", "gelsd", "gelss"]. Found {driver}.')
 
-        fb = F.melscale_fbanks(n_stft, self.f_min, self.f_max, self.n_mels, self.sample_rate, norm, mel_scale)
+        fb = F.melscale_fbanks(
+            self.n_stft, self.f_min, self.f_max, self.n_mels, self.sample_rate, self.norm, self.mel_scale
+        )
         self.register_buffer("fb", fb)
 
     def forward(self, melspec: Tensor) -> Tensor:
@@ -1202,7 +1211,8 @@ class _AxisMasking(torch.nn.Module):
                 specgram, self.mask_param, mask_value, self.axis + specgram.dim() - 3, p=self.p
             )
         else:
-            return F.mask_along_axis(specgram, self.mask_param, mask_value, self.axis + specgram.dim() - 3, p=self.p)
+            mask_value_ = float(mask_value) if isinstance(mask_value, Tensor) else mask_value
+            return F.mask_along_axis(specgram, self.mask_param, mask_value_, self.axis + specgram.dim() - 3, p=self.p)
 
 
 class FrequencyMasking(_AxisMasking):
@@ -1847,7 +1857,7 @@ class RNNTLoss(torch.nn.Module):
             Tensor: Loss with the reduction option applied. If ``reduction`` is  ``"none"``, then size (batch),
             otherwise scalar.
         """
-        return _rnnt_loss(
+        return rnnt_loss(
             logits,
             targets,
             logit_lengths,

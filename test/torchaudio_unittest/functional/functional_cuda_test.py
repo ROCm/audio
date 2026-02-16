@@ -1,7 +1,8 @@
 import unittest
 
 import torch
-from torchaudio_unittest.common_utils import PytorchTestCase, skipIfNoCuda, skipIfRocm
+
+from torchaudio_unittest.common_utils import PytorchTestCase, skipIfNoCuda, skipIfSingleCuda, skipIfRocm
 
 from .functional_impl import Functional, FunctionalCUDAOnly
 
@@ -28,6 +29,12 @@ class TestLFilterFloat64(Functional, PytorchTestCase):
 class TestFunctionalCUDAOnlyFloat32(FunctionalCUDAOnly, PytorchTestCase):
     dtype = torch.float32
     device = torch.device("cuda")
+
+
+@skipIfSingleCuda
+class TestFunctionalMultiGPUCUDAOnlyFloat32(FunctionalCUDAOnly, PytorchTestCase):
+    dtype = torch.float32
+    device = torch.device("cuda:1")
 
 
 @skipIfNoCuda

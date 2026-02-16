@@ -35,6 +35,7 @@ jobs:
         export FFMPEG_VERSION="${{ matrix.ffmpeg-version }}"
         export PIP_PROGRESS_BAR=off
         export CONDA_QUIET=1
+        export NO_COLOR=1
 
         # Set UPLOAD_CHANNEL
         if [[(${GITHUB_EVENT_NAME} = 'pull_request' && (${GITHUB_BASE_REF} = 'release'*)) || (${GITHUB_REF} = 'refs/heads/release'*) ]]; then
@@ -46,7 +47,7 @@ jobs:
         echo "::group::Create conda env"
         # Mark Build Directory Safe
         git config --global --add safe.directory /__w/audio/audio
-        conda create -c conda-forge --strict-channel-priority -y -n ci_env python="${PYTHON_VERSION}" ffmpeg="${FFMPEG_VERSION}" cmake ninja
+        conda create -c conda-forge --strict-channel-priority -y -n ci_env python="${PYTHON_VERSION}" ffmpeg="${FFMPEG_VERSION}" ninja
         conda activate ci_env
         conda info
         ffmpeg -version
@@ -92,5 +93,7 @@ jobs:
         export TORCHAUDIO_TEST_ALLOW_SKIP_IF_NO_SOX_DECODER=true
         export TORCHAUDIO_TEST_ALLOW_SKIP_IF_NO_SOX_ENCODER=true
         export TORCHAUDIO_TEST_ALLOW_SKIP_IF_NO_FFMPEG=true
+        export TORCHAUDIO_TEST_ALLOW_SKIP_IF_NO_MULTIGPU_CUDA=true
+
         pytest test/torchaudio_unittest -k "not torchscript and not fairseq and not demucs" -x
         echo "::endgroup::"
