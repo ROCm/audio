@@ -71,6 +71,19 @@ def get_ext_modules():
         extension = CUDAExtension
         extra_compile_args["cxx"].append("-DUSE_CUDA")
         extra_compile_args["nvcc"] = ["-O2", "-DUSE_CUDA"]
+    if _USE_ROCM:
+        extension = CUDAExtension
+        extra_compile_args["cxx"].append("-DHIPBLAS_V2")
+        extra_compile_args["nvcc"] = ["-O3", "-DHIPBLAS_V2"]
+        # TORCH_HIP_VERSION is used by hipified C++ (e.g. utils_hip.cpp); PyTorch only defines it when building PyTorch.
+        if torch.version.hip:
+            parts = torch.version.hip.split(".")
+            major = int(parts[0]) if len(parts) > 0 else 0
+            minor = int(parts[1]) if len(parts) > 1 else 0
+            patch = int(parts[2].split("-")[0]) if len(parts) > 2 else 0
+            torch_hip_version = major * 100 + minor * 10 + patch  # e.g. 6.0.1 -> 601
+            extra_compile_args["cxx"].append("-DTORCH_HIP_VERSION=" + str(torch_hip_version))
+            extra_compile_args["nvcc"].append("-DTORCH_HIP_VERSION=" + str(torch_hip_version))
 
     sources = [
         "utils.cpp",
@@ -88,7 +101,7 @@ def get_ext_modules():
                 "rnnt/compute.cpp",
             ]
         )
-        if _USE_CUDA:
+        if _USE_CUDA or _USE_ROCM:
             sources.append("rnnt/gpu/compute.cu")
 
     if _BUILD_ALIGN:
