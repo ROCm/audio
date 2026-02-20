@@ -80,8 +80,7 @@ def get_ext_modules():
             parts = torch.version.hip.split(".")
             major = int(parts[0]) if len(parts) > 0 else 0
             minor = int(parts[1]) if len(parts) > 1 else 0
-            patch = int(parts[2].split("-")[0]) if len(parts) > 2 else 0
-            torch_hip_version = major * 100 + minor * 10 + patch  # e.g. 6.0.1 -> 601
+            torch_hip_version = major * 100 + minor  # e.g. 7.1.x -> 701
             extra_compile_args["cxx"].append("-DTORCH_HIP_VERSION=" + str(torch_hip_version))
             extra_compile_args["nvcc"].append("-DTORCH_HIP_VERSION=" + str(torch_hip_version))
 
@@ -91,7 +90,7 @@ def get_ext_modules():
         "overdrive.cpp",
     ]
 
-    if _USE_CUDA:
+    if _USE_CUDA or _USE_ROCM:
         sources.append("iir_cuda.cu")
 
     if _BUILD_RNNT:
