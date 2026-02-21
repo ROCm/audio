@@ -111,7 +111,7 @@ def get_ext_modules():
                 "forced_align/compute.cpp",
             ]
         )
-        if _USE_CUDA:
+        if _USE_CUDA or _USE_ROCM:
             sources.append("forced_align/gpu/compute.cu")
 
     modules = [

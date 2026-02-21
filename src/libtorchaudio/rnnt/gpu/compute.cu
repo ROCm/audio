@@ -7,7 +7,7 @@
 #include <torch/headeronly/core/Dispatch_v2.h>
 
 #ifdef USE_ROCM
-#include <libtorchaudio/hip_namespace_shim.h>
+  #include <libtorchaudio/hip_namespace_shim.h>
 #endif
 
 namespace torchaudio {
