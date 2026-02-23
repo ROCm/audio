@@ -18,7 +18,8 @@ inline void setCurrentHIPStreamMasqueradingAsCUDA(
 inline hipStream_t getStreamFromPoolMasqueradingAsCUDA(
     const bool isHighPriority = false,
     torch::stable::DeviceIndex device_index = -1) {
-  return cuda::getStreamFromPoolMasqueradingAsCUDA(isHighPriority, device_index);
+  return cuda::getStreamFromPoolMasqueradingAsCUDA(
+      isHighPriority, device_index);
 }
 
 inline void synchronize(
