@@ -1,8 +1,7 @@
 import unittest
 
 import torch
-
-from torchaudio_unittest.common_utils import PytorchTestCase, skipIfNoCuda, skipIfSingleCuda, skipIfRocm
+from torchaudio_unittest.common_utils import PytorchTestCase, skipIfNoCuda, skipIfSingleCuda
 
 from .functional_impl import Functional, FunctionalCUDAOnly
 
@@ -13,13 +12,11 @@ class TestFunctionalFloat32(Functional, PytorchTestCase):
     device = torch.device("cuda")
 
     @unittest.expectedFailure
-    @skipIfRocm
     def test_lfilter_9th_order_filter_stability(self):
         super().test_lfilter_9th_order_filter_stability()
 
 
 @skipIfNoCuda
-@skipIfRocm
 class TestLFilterFloat64(Functional, PytorchTestCase):
     dtype = torch.float64
     device = torch.device("cuda")

@@ -14,7 +14,6 @@ from torchaudio_unittest.common_utils import (
     get_whitenoise,
     nested_params,
     rnnt_utils,
-    skipIfRocm,
     TestBaseMixin,
 )
 
@@ -632,13 +631,11 @@ class Functional(TestBaseMixin):
         waveform_shift = F.pitch_shift(waveform, sample_rate, n_steps)
         assert waveform.size() == waveform_shift.size()
 
-    @skipIfRocm
     def test_rnnt_loss_basic_backward(self):
         logits, targets, logit_lengths, target_lengths = rnnt_utils.get_basic_data(self.device)
         loss = F.rnnt_loss(logits, targets, logit_lengths, target_lengths)
         loss.backward()
 
-    @skipIfRocm
     def test_rnnt_loss_basic_forward_no_grad(self):
         """In early stage, calls to `rnnt_loss` resulted in segmentation fault when
         `logits` have `requires_grad = False`. This test makes sure that this no longer
@@ -658,7 +655,6 @@ class Functional(TestBaseMixin):
             (rnnt_utils.get_B2_T4_U3_D3_data, torch.float16, 1e-3, 1e-2),
         ]
     )
-    @skipIfRocm
     def test_rnnt_loss_costs_and_gradients(self, data_func, dtype, atol, rtol):
         data, ref_costs, ref_gradients = data_func(
             dtype=dtype,
@@ -673,7 +669,6 @@ class Functional(TestBaseMixin):
         )
 
     @parameterized.expand([(True,), (False,)])
-    @skipIfRocm
     def test_rnnt_loss_costs_and_gradients_random_data_with_numpy_fp32(self, fused_log_softmax):
         seed = 777
         for i in range(5):
