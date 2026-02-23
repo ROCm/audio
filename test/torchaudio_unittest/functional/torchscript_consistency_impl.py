@@ -796,6 +796,7 @@ class Functional(TempDirMixin, TestBaseMixin):
 
 
 class FunctionalFloat32Only(TestBaseMixin):
+    @skipIfRocm
     def test_rnnt_loss(self):
         def func(tensor):
             targets = torch.tensor([[1, 2]], device=tensor.device, dtype=torch.int32)

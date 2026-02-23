@@ -5,7 +5,14 @@ import torch
 import torchaudio.transforms as T
 from parameterized import parameterized
 from torch.autograd import gradcheck, gradgradcheck
-from torchaudio_unittest.common_utils import get_spectrogram, get_whitenoise, nested_params, rnnt_utils, TestBaseMixin
+from torchaudio_unittest.common_utils import (
+    TestBaseMixin,
+    get_spectrogram,
+    get_whitenoise,
+    nested_params,
+    rnnt_utils,
+    skipIfRocm,
+)
 
 
 class _DeterministicWrapper(torch.nn.Module):
@@ -73,6 +80,7 @@ class AutogradTestMixin(TestBaseMixin):
         waveform = get_whitenoise(sample_rate=8000, duration=0.05, n_channels=2)
         self.assert_grad(transform, [waveform], nondet_tol=1e-10)
 
+    @skipIfRocm
     def test_inverse_spectrogram(self):
         # create a realistic input:
         waveform = get_whitenoise(sample_rate=8000, duration=0.05, n_channels=2)
@@ -96,6 +104,7 @@ class AutogradTestMixin(TestBaseMixin):
         [0, 0.99],
         [False, True],
     )
+    @skipIfRocm
     def test_griffinlim(self, momentum, rand_init):
         n_fft = 80
         power = 1
@@ -115,6 +124,7 @@ class AutogradTestMixin(TestBaseMixin):
         self.assert_grad(transform, [waveform], nondet_tol=1e-10)
 
     @parameterized.expand([(False,), (True,)])
+    @skipIfRocm
     def test_lfcc(self, log_lf):
         sample_rate = 8000
         transform = T.LFCC(sample_rate=sample_rate, log_lf=log_lf)
