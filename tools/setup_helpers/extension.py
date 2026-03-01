@@ -73,8 +73,7 @@ def get_ext_modules():
         extra_compile_args["nvcc"] = ["-O2", "-DUSE_CUDA"]
     if _USE_ROCM:
         extension = CUDAExtension
-        extra_compile_args["cxx"].append("-DHIPBLAS_V2")
-        extra_compile_args["nvcc"] = ["-O3", "-DHIPBLAS_V2"]
+        extra_compile_args["nvcc"] = ["-O3"]
         # TORCH_HIP_VERSION is used by hipified C++ (e.g. utils_hip.cpp); PyTorch only defines it when building PyTorch.
         if torch.version.hip:
             parts = torch.version.hip.split(".")
