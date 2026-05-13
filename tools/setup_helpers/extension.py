@@ -3,7 +3,12 @@ import platform
 from pathlib import Path
 
 import torch
-from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
+from torch.utils.cpp_extension import (
+    TORCH_HIP_VERSION,
+    BuildExtension,
+    CppExtension,
+    CUDAExtension,
+)
 
 __all__ = [
     "get_ext_modules",
@@ -74,14 +79,10 @@ def get_ext_modules():
     if _USE_ROCM:
         extension = CUDAExtension
         extra_compile_args["nvcc"] = ["-O3"]
-        # TORCH_HIP_VERSION is used by hipified C++ (e.g. utils_hip.cpp); PyTorch only defines it when building PyTorch.
-        if torch.version.hip:
-            parts = torch.version.hip.split(".")
-            major = int(parts[0]) if len(parts) > 0 else 0
-            minor = int(parts[1]) if len(parts) > 1 else 0
-            torch_hip_version = major * 100 + minor  # e.g. 7.1.x -> 701
-            extra_compile_args["cxx"].append("-DTORCH_HIP_VERSION=" + str(torch_hip_version))
-            extra_compile_args["nvcc"].append("-DTORCH_HIP_VERSION=" + str(torch_hip_version))
+        if TORCH_HIP_VERSION is not None:
+            flag = f"-DTORCH_HIP_VERSION={int(TORCH_HIP_VERSION)}"
+            extra_compile_args["cxx"].append(flag)
+            extra_compile_args["nvcc"].append(flag)
 
     sources = [
         "utils.cpp",
