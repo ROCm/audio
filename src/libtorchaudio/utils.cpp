@@ -15,7 +15,10 @@ bool is_align_available() {
 }
 
 std::optional<int64_t> cuda_version() {
-#ifdef USE_CUDA
+#if defined(TORCH_HIP_VERSION)
+  // TORCH_HIP_VERSION = {ROCM_VERSION[0] * 100 + ROCM_VERSION[1]}
+  return static_cast<int64_t>(TORCH_HIP_VERSION);
+#elif defined(USE_CUDA)
   return CUDA_VERSION;
 #else
   return {};
