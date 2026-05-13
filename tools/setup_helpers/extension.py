@@ -3,7 +3,12 @@ import platform
 from pathlib import Path
 
 import torch
-from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
+from torch.utils.cpp_extension import (
+    TORCH_HIP_VERSION,
+    BuildExtension,
+    CppExtension,
+    CUDAExtension,
+)
 
 __all__ = [
     "get_ext_modules",
