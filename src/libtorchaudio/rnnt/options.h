@@ -13,7 +13,7 @@ namespace rnnt {
 struct Options {
   // the device to compute transducer loss.
   device_t device_;
-#ifdef USE_CUDA
+#if defined(USE_CUDA) || defined(USE_ROCM)
   // the stream to launch kernels in when using GPU.
   cudaStream_t stream_;
 #endif
