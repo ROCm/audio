@@ -26,6 +26,8 @@
 #ifndef __ctc_prefix_decoder_host_h_
 #define __ctc_prefix_decoder_host_h_
 
+#include <libtorchaudio/cuda_compat.h>
+
 #define CHECK(X, ERROR_INFO)                        \
   do {                                              \
     auto result = (X);                              \
