@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef USE_CUDA
-#include <cuda_runtime.h>
-#endif // USE_CUDA
+#if defined(USE_CUDA) || defined(USE_ROCM)
+#include <libtorchaudio/cuda_compat.h>
+#endif // USE_CUDA || USE_ROCM
 
 #include <libtorchaudio/rnnt/types.h>
 #include <ostream>
@@ -13,7 +13,7 @@ namespace rnnt {
 struct Options {
   // the device to compute transducer loss.
   device_t device_;
-#ifdef USE_CUDA
+#if defined(USE_CUDA) || defined(USE_ROCM)
   // the stream to launch kernels in when using GPU.
   cudaStream_t stream_;
 #endif

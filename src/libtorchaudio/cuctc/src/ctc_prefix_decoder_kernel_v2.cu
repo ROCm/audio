@@ -28,7 +28,12 @@
 #include <limits>
 #include "../include/ctc_prefix_decoder_host.h"
 #include "ctc_fast_divmod.cuh"
+#if defined(USE_ROCM)
+#include <hipcub/hipcub.hpp>
+namespace cub = hipcub;
+#else
 #include "cub/cub.cuh"
+#endif
 #include "device_data_wrap.h"
 #include "device_log_prob.cuh"
 

@@ -23,7 +23,7 @@
 // OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <cuda_runtime.h>
+#include <libtorchaudio/cuda_compat.h>
 
 #include "../include/ctc_prefix_decoder.h"
 #include "../include/ctc_prefix_decoder_host.h"
