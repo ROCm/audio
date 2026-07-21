@@ -441,7 +441,12 @@ __launch_bounds__(BLOCK_SIZE) void topk_reduce_and_copy_list_per_batch_kernel(
       topk_values,
       beam,
       items_per_batch,
-#if CUDART_VERSION >= 12090  // CUDA 12.9 and later
+// If we have CCCL >= 2.8 support, we can use std::numeric. Otherwise,
+// fallback to using cub's FpLimits.
+// This means we need a minimum of CUDA 12.9 or HIPCUB 4.1.0.
+#if (defined(CUDART_VERSION) && CUDART_VERSION >= 12090) || \
+    ((defined(__HIP_PLATFORM_AMD__) || defined(USE_ROCM)) && \
+     defined(HIPCUB_VERSION) && HIPCUB_VERSION >= 400100)
       std::numeric_limits<float>::lowest(),
 #else
       cub::FpLimits<float>::Lowest(),
