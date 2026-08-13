@@ -24,7 +24,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
-#include <cuda_runtime.h>
+#include <libtorchaudio/cuda_compat.h>
 #include <iostream>
 #include <vector>
 #include "../include/ctc_prefix_decoder_host.h"

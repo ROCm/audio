@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cuda_runtime_api.h>
+#include <libtorchaudio/cuda_compat.h>
 #include <torch/csrc/stable/c/shim.h>
 #include <torch/csrc/stable/device.h>
 

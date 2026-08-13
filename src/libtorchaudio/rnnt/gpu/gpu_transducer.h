@@ -1,7 +1,8 @@
 #pragma once
 
-#ifdef USE_CUDA
+#if defined(USE_CUDA) || defined(USE_ROCM)
 
+#include <libtorchaudio/cuda_compat.h>
 #include <libtorchaudio/rnnt/workspace.h>
 #include <libtorchaudio/rnnt/gpu/gpu_kernel_utils.cuh>
 #include <libtorchaudio/rnnt/gpu/gpu_kernels.cuh>

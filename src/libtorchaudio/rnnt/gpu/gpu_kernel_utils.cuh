@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef USE_CUDA
+#if defined(USE_CUDA) || defined(USE_ROCM)
 
 #include <libtorchaudio/rnnt/gpu/math.cuh>
 
