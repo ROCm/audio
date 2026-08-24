@@ -3,12 +3,7 @@ import platform
 from pathlib import Path
 
 import torch
-from torch.utils.cpp_extension import (
-    TORCH_HIP_VERSION,
-    BuildExtension,
-    CppExtension,
-    CUDAExtension,
-)
+from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
 
 __all__ = [
     "get_ext_modules",
@@ -79,10 +74,6 @@ def get_ext_modules():
     if _USE_ROCM:
         extension = CUDAExtension
         extra_compile_args["nvcc"] = ["-O3"]
-        if TORCH_HIP_VERSION is not None:
-            flag = f"-DTORCH_HIP_VERSION={int(TORCH_HIP_VERSION)}"
-            extra_compile_args["cxx"].append(flag)
-            extra_compile_args["nvcc"].append(flag)
 
     sources = [
         "utils.cpp",
