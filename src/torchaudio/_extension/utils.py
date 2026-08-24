@@ -130,12 +130,12 @@ def _check_cuda_version():
         ta_major = int(version) // 100
         ta_minor = int(version) % 100
         ta_version = f"{ta_major}.{ta_minor}"
-        hip_parts = torch.version.hip.split(".")
-        t_version = f"{hip_parts[0]}.{hip_parts[1]}"
+        rocm_parts = torch.version.rocm.split(".")
+        t_version = f"{rocm_parts[0]}.{rocm_parts[1]}"
         if ta_version != t_version:
             raise RuntimeError(
-                "Detected that PyTorch and TorchAudio were compiled with different ROCm HIP versions. "
-                f"PyTorch has HIP version {t_version} whereas TorchAudio has HIP version {ta_version}. "
+                "Detected that PyTorch and TorchAudio were compiled with different ROCm versions. "
+                f"PyTorch has ROCm version {t_version} whereas TorchAudio has ROCm version {ta_version}. "
                 "Please install the TorchAudio version that matches your PyTorch version."
             )
     return version

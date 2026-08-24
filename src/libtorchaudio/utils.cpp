@@ -4,6 +4,10 @@
 #include <cuda.h>
 #endif
 
+#ifdef USE_ROCM
+#include <rocm-core/rocm_version.h>
+#endif
+
 namespace torchaudio {
 
 bool is_align_available() {
@@ -15,9 +19,8 @@ bool is_align_available() {
 }
 
 std::optional<int64_t> cuda_version() {
-#if defined(TORCH_HIP_VERSION)
-  // TORCH_HIP_VERSION = {ROCM_VERSION[0] * 100 + ROCM_VERSION[1]}
-  return static_cast<int64_t>(TORCH_HIP_VERSION);
+#if defined(USE_ROCM)
+  return static_cast<int64_t>(ROCM_VERSION_MAJOR * 100 + ROCM_VERSION_MINOR);
 #elif defined(USE_CUDA)
   return CUDA_VERSION;
 #else
