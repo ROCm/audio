@@ -69,12 +69,12 @@ Tensor cuda_lfilter_core_loop(
   const dim3 blocks((N * C + threads.x - 1) / threads.x);
 
   THO_DISPATCH_V2(
-      in.scalar_type(), "iir_cu_loop", AT_WRAP([&] {
-        (iir_cu_kernel<scalar_t><<<blocks, threads>>>(
-            torchaudio::packed_accessor_size_t<scalar_t, 3>(in),
-            torchaudio::packed_accessor_size_t<scalar_t, 2>(a_flipped),
-            torchaudio::packed_accessor_size_t<scalar_t, 3>(padded_out)));
-        STD_CUDA_KERNEL_LAUNCH_CHECK();
-        }), AT_FLOATING_TYPES);
+    in.scalar_type(), "iir_cu_loop", AT_WRAP(([&]() {
+      iir_cu_kernel<scalar_t><<<blocks, threads>>>(
+          torchaudio::packed_accessor_size_t<scalar_t, 3>(in),
+          torchaudio::packed_accessor_size_t<scalar_t, 2>(a_flipped),
+          torchaudio::packed_accessor_size_t<scalar_t, 3>(padded_out));
+      STD_CUDA_KERNEL_LAUNCH_CHECK();
+      })), AT_FLOATING_TYPES);
   return padded_out;
 }
