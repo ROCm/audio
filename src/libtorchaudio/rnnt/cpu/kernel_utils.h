@@ -18,9 +18,9 @@ inline HOST_AND_DEVICE bool in_range(
 #define LOG_PROBS_EMIT_IDX 1
 
 struct Indexer2D {
-  const int& size2_;
+  int size2_;
 
-  FORCE_INLINE HOST_AND_DEVICE Indexer2D(const int& size2) : size2_(size2) {}
+  FORCE_INLINE HOST_AND_DEVICE Indexer2D(int size2) : size2_(size2) {}
 
   FORCE_INLINE HOST_AND_DEVICE int operator()(int index1, int index2) {
     return index1 * size2_ + index2;
@@ -28,10 +28,10 @@ struct Indexer2D {
 };
 
 struct Indexer3D {
-  const int& size2_;
-  const int& size3_;
+  int size2_;
+  int size3_;
 
-  FORCE_INLINE HOST_AND_DEVICE Indexer3D(const int& size2, const int& size3)
+  FORCE_INLINE HOST_AND_DEVICE Indexer3D(int size2, int size3)
       : size2_(size2), size3_(size3) {}
 
   FORCE_INLINE HOST_AND_DEVICE int operator()(
@@ -43,14 +43,11 @@ struct Indexer3D {
 };
 
 struct Indexer4D {
-  const int& size2_;
-  const int& size3_;
-  const int& size4_;
+  int size2_;
+  int size3_;
+  int size4_;
 
-  HOST_AND_DEVICE Indexer4D(
-      const int& size2,
-      const int& size3,
-      const int& size4)
+  HOST_AND_DEVICE Indexer4D(int size2, int size3, int size4)
       : size2_(size2), size3_(size3), size4_(size4) {}
 
   HOST_AND_DEVICE int operator()(
